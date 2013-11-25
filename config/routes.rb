@@ -1,8 +1,18 @@
 SimpleApp::Application.routes.draw do
-  get "static_pages/home"
-  get "static_pages/help"
-  get "static_pages/about"
-  get "static_pages/contact"
+  root to: 'static_pages#home'
+
+  get '/signup' => 'users#new'
+  
+  match '/help',    to: 'static_pages#help',    via: 'get' # this is a named route, can generate help_path and help_url helper method
+  match '/contact' => 'static_pages#contact', via: 'get' # can be simplifed
+  get '/about',   to: 'static_pages#about'#, as: 'about' # can be omit
+
+  # get "static_pages/home" # normal routes
+  # get "static_pages/help"
+  # get "static_pages/about"
+  # get "static_pages/contact"
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
