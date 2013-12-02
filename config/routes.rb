@@ -1,9 +1,13 @@
 SimpleApp::Application.routes.draw do
   root to: 'static_pages#home'
 
-  resources :users
+  resources :sessions, only: [:new, :destroy, :create]
 
+  resources :users
   get '/signup' => 'users#new'
+  get '/signin' => 'sessions#new'
+  delete '/signout' => 'sessions#destroy'
+
   match '/help',    to: 'static_pages#help',    via: 'get' # this is a named route, can generate help_path and help_url helper method
   match '/contact' => 'static_pages#contact', via: 'get' # can be simplifed
   get '/about',   to: 'static_pages#about'#, as: 'about' # can be omit
