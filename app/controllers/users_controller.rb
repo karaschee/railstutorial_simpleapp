@@ -46,6 +46,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find_by_id(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   private
@@ -53,13 +54,6 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:name, :email, :password,
                                    :password_confirmation)
-    end
-
-    def signed_in_user
-      unless signed_in?
-        store_location
-        redirect_to signin_url, notice: "Please sign in." 
-      end
     end
 
     def no_need_for_signed_user
@@ -78,10 +72,6 @@ class UsersController < ApplicationController
     end
 
     def cannot_del_himself
-      pp current_user.id
-      pp params[:id].to_i
-      pp current_user.id == params[:id].to_i
-      pp current_user == User.find(params[:id])
       redirect_to(root_path) if current_user == User.find(params[:id])
     end
 end

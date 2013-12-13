@@ -2,7 +2,7 @@ SimpleApp::Application.routes.draw do
   root to: 'static_pages#home'
 
   resources :sessions, only: [:new, :destroy, :create]
-
+  resources :microposts, only: [:create, :destroy]
   resources :users
   get '/signup' => 'users#new'
   get '/signin' => 'sessions#new'
