@@ -19,6 +19,9 @@ describe "Authentication" do
 
       it { should have_title('Sign in') }
       it { should have_selector('div.alert.alert-error', text: 'Invalid') }
+      it { should_not have_link('Profile') }
+      it { should_not have_link('Setting') }
+
 
       describe "after visiting another page" do
         before { click_link "Home" }
@@ -59,6 +62,16 @@ describe "Authentication" do
         describe "after signing in" do
           it "should render the disired protected page" do
             expect(page).to have_title('Edit user')
+          end
+
+          describe "then signin again" do
+            before do
+              delete signout_path
+              sign_in user
+            end
+            it "should render the default (profile) page" do
+              expect(page).to have_title(user.name)
+            end
           end
         end
       end
@@ -109,6 +122,24 @@ describe "Authentication" do
         before { delete user_path(user) }
         specify { expect(response).to redirect_to(root_path) }
       end
+    end
+  end
+
+  describe "no need signup for signed user" do
+    let(:user) { FactoryGirl.create(:user) }
+    before do
+      sign_in user, no_capybara: true
+      visit signup_path
+    end
+
+    describe "visit signup path" do
+      before { visit signup_path }
+      it { should_not have_title('| Home') }
+    end
+
+    describe "create action" do
+      before { post users_path(user) }
+      it { should_not have_title('| Home') }
     end
   end
 end

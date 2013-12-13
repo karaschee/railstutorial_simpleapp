@@ -38,13 +38,24 @@ describe "UserPages" do
           visit users_path
         end
 
-        it { should have_link('delete', href: user_path(User.first)) }
-        it "should be able to delete another user" do
-          expect do
-            click_link('delete', match: :first)
-          end.to change(User, :count).by(-1)
-        end
         it { should_not have_link('delete', href: user_path(admin)) }
+        it { should have_link('delete', href: user_path(User.first)) }
+
+        describe "" do
+          it "should be able to delete another user" do
+            expect do
+              click_link('delete', match: :first)
+            end.to change(User, :count).by(-1)
+          end
+        end
+
+        describe "cannot delete himself" do
+          before do 
+            sign_in admin, no_capybara: true
+            delete user_path(admin)
+          end
+          it { expect(response).to redirect_to(root_path) }
+        end
       end
     end
   end
@@ -135,6 +146,13 @@ describe "UserPages" do
       it { should have_link('Sign out', href: signout_path) }
       specify { expect(user.reload.name).to eq new_name }
       specify { expect(user.reload.email).to eq new_email }
+    end
+
+    describe "forbidden attributes" do
+      let(:params) { { user: { admin: true, password: user.password, password_confirmation: user.password } } }
+
+      before { patch user_path(user), params }
+      specify { expect(user.reload).not_to be_admin }
     end
   end
 end

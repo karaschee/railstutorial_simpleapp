@@ -2,6 +2,8 @@ class UsersController < ApplicationController
   before_action :signed_in_user, only: [:edit, :update, :index]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: :destroy
+  before_action :no_need_for_signed_user, only: [:new, :create]
+  before_action :cannot_del_himself, only: :destroy
 
   def index
     @users = User.paginate(page: params[:page])
@@ -60,6 +62,12 @@ class UsersController < ApplicationController
       end
     end
 
+    def no_need_for_signed_user
+      if signed_in?
+        redirect_to root_url
+      end
+    end
+
     def correct_user
       @user = User.find(params[:id])
       redirect_to root_url unless current_user?(@user)
@@ -67,5 +75,13 @@ class UsersController < ApplicationController
 
     def admin_user
       redirect_to(root_path) unless current_user.admin?
+    end
+
+    def cannot_del_himself
+      pp current_user.id
+      pp params[:id].to_i
+      pp current_user.id == params[:id].to_i
+      pp current_user == User.find(params[:id])
+      redirect_to(root_path) if current_user == User.find(params[:id])
     end
 end
