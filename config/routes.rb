@@ -3,7 +3,13 @@ SimpleApp::Application.routes.draw do
 
   resources :sessions, only: [:new, :destroy, :create]
   resources :microposts, only: [:create, :destroy]
-  resources :users
+  resources :users do
+    member do # 用于单数 /users/1/following
+      get :following, :followers # generate path: following_user_path, action: users#following
+    end
+    # collection { get :friends } # 用于复数 /users/friends
+  end
+  resources :relationships, only: [:create, :destroy]
   get '/signup' => 'users#new'
   get '/signin' => 'sessions#new'
   delete '/signout' => 'sessions#destroy'
