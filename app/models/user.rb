@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   # [class_name: "Relationship"] - 对应的表Relationship
   has_many :reverse_relationships, foreign_key: "followed_id", dependent: :destroy, class_name: "Relationship"
 
-  # [:followeds] - 所取的Relationship关联followed, 属性名followeds
+  # [:followeds] - 所取的Relationship关联followed(source: followed), 属性名followeds
   # [through: :relationships] - 指定的User关联
   # has_many :followeds, through: :relationships
 
